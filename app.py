@@ -89,7 +89,7 @@ def read_aws_text(session_id, question_id):
 
 
 def append_to_aws_text(cache_key, message):
-    logger.info(f"{cache_key} append_to_aws_text: {message}")
+    # logger.info(f"{cache_key} append_to_aws_text: {message}")
     if USE_REDIS_CACHE:
         append_text_to_redis(cache_key, message)
     else:
