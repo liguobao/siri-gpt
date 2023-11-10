@@ -226,6 +226,14 @@ class StreamingGradioCallbackHandler(BaseCallbackHandler):
     ) -> None:
         pass
 
+    def on_retry(self):
+        logger.info("ignore_retry")
+        return True
+
+    def ignore_retry(self):
+        logger.info("ignore_retry")
+        pass
+
     def on_llm_new_token(self, token: str, **kwargs: Any) -> None:
         append_to_aws_text(self.redis_key,token)
 
