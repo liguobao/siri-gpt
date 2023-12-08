@@ -357,18 +357,19 @@ def read_session_text(session_id):
     file_path = f"{CACHE_PATH}/{session_id}"
     if not os.path.exists(file_path):
         return jsonify({'status': 'fail'})
-    session_text = read_chat_history(file_path)
+    session_text = to_chat_text(file_path)
     return session_text
 
 
 @app.route('/api/chat_history/latest_text', methods=['GET'])
 def read_latest_text():
     chat_history_list = read_chat_history_list()
-    session_text = read_chat_history(chat_history_list[-1])
+    file_path = f"{CACHE_PATH}/{chat_history_list[-1]}"
+    session_text = to_chat_text(file_path)
     return session_text
 
 
-def read_chat_history(file_path):
+def to_chat_text(file_path):
     with open(file_path, "r") as f:
         chat_history = json.load(f)
         session_text = ""
