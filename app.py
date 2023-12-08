@@ -340,18 +340,35 @@ def answer():
 
 @app.route('/api/chat_history', methods=['GET'])
 def list_chat_history():
+    chat_history_list = read_chat_history_list()
+    return jsonify({'status': 'ok', "chat_history_list": chat_history_list})
+
+
+def read_chat_history_list():
     chat_history_list = []
     for file_path in os.listdir(CACHE_PATH):
         if file_path.endswith(".json"):
             chat_history_list.append(file_path)
-    return jsonify({'status': 'ok', "chat_history_list": chat_history_list})
+    return chat_history_list
 
 
 @app.route('/api/chat_history/<path:session_id>/text', methods=['GET'])
-def chat_history_text(session_id):
+def read_session_text(session_id):
     file_path = f"{CACHE_PATH}/{session_id}"
     if not os.path.exists(file_path):
         return jsonify({'status': 'fail'})
+    session_text = read_chat_history(file_path)
+    return session_text
+
+
+@app.route('/api/chat_history/latest_text', methods=['GET'])
+def read_latest_text():
+    chat_history_list = read_chat_history_list()
+    session_text = read_chat_history(chat_history_list[-1])
+    return session_text
+
+
+def read_chat_history(file_path):
     with open(file_path, "r") as f:
         chat_history = json.load(f)
         session_text = ""
@@ -365,7 +382,7 @@ def chat_history_text(session_id):
             session_text = session_text + \
                 f'<p>{ans_item["type"]} :{ans_item["data"]["content"]}</p>' + "<br\>"
             session_text = session_text + "<br\><p>-------------------</p><br\>"
-        return session_text
+    return session_text
 
 
 @app.route('/api/chat_history/<path:session_id>', methods=['GET'])
